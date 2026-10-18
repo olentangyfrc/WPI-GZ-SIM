@@ -1,0 +1,217 @@
+<?xml version="1.0"?>
+<robot name="frc_swerve">
+
+  <link name="base_footprint"/>
+
+  <!-- Fixed base joint setting chassis height above ground -->
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="chassis_link"/>
+    <origin xyz="0 0 0.18" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ==================== CHASSIS ==================== -->
+  <link name="chassis_link">
+    <inertial>
+      <mass value="45.0"/>
+      <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      <inertia ixx="1.8" ixy="0" ixz="0" iyy="1.8" iyz="0" izz="3.0"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/Chassis.stl"/>
+      </geometry>
+      <material name="chassis_dark_gray">
+        <color rgba="0.2 0.2 0.2 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.75 0.75 0.15"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Gazebo Material Extension: Dark Charcoal Chassis -->
+  <gazebo reference="chassis_link">
+    <visual>
+      <material>
+        <ambient>0.2 0.2 0.2 1.0</ambient>
+        <diffuse>0.25 0.25 0.25 1.0</diffuse>
+        <specular>0.4 0.4 0.4 1.0</specular>
+      </material>
+    </visual>
+  </gazebo>
+
+  <!-- ==================== FRONT LEFT ==================== -->
+  <link name="fl_steer_link">
+    <inertial>
+      <mass value="1.5"/>
+      <origin xyz="0 0 -0.05" rpy="0 0 0"/>
+      <inertia ixx="0.002" ixy="0" ixz="0" iyy="0.002" iyz="0" izz="0.003"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/Wheel.stl"/>
+      </geometry>
+      <material name="module_blue">
+        <color rgba="0.1 0.4 0.8 1.0"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="fl_steer_joint" type="continuous">
+    <parent link="chassis_link"/>
+    <child link="fl_steer_link"/>
+    <origin xyz="0.28890 0.28974 0.1280" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="15.0" velocity="25.0"/>
+  </joint>
+
+  <gazebo reference="fl_steer_link">
+    <visual>
+      <material>
+        <ambient>0.1 0.4 0.8 1.0</ambient>
+        <diffuse>0.15 0.5 0.9 1.0</diffuse>
+        <specular>0.5 0.5 0.5 1.0</specular>
+      </material>
+    </visual>
+  </gazebo>
+
+  <!-- ==================== FRONT RIGHT ==================== -->
+  <link name="fr_steer_link">
+    <inertial>
+      <mass value="1.5"/>
+      <origin xyz="0 0 -0.05" rpy="0 0 0"/>
+      <inertia ixx="0.002" ixy="0" ixz="0" iyy="0.002" iyz="0" izz="0.003"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/Wheel.stl"/>
+      </geometry>
+      <material name="module_blue"/>
+    </visual>
+  </link>
+
+  <joint name="fr_steer_joint" type="continuous">
+    <parent link="chassis_link"/>
+    <child link="fr_steer_link"/>
+    <origin xyz="0.28890 -0.28974 0.1280" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="15.0" velocity="25.0"/>
+  </joint>
+
+  <gazebo reference="fr_steer_link">
+    <visual>
+      <material>
+        <ambient>0.1 0.4 0.8 1.0</ambient>
+        <diffuse>0.15 0.5 0.9 1.0</diffuse>
+        <specular>0.5 0.5 0.5 1.0</specular>
+      </material>
+    </visual>
+  </gazebo>
+
+  <!-- ==================== BACK LEFT ==================== -->
+  <link name="bl_steer_link">
+    <inertial>
+      <mass value="1.5"/>
+      <origin xyz="0 0 -0.05" rpy="0 0 0"/>
+      <inertia ixx="0.002" ixy="0" ixz="0" iyy="0.002" iyz="0" izz="0.003"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/Wheel.stl"/>
+      </geometry>
+      <material name="module_blue"/>
+    </visual>
+  </link>
+
+  <joint name="bl_steer_joint" type="continuous">
+    <parent link="chassis_link"/>
+    <child link="bl_steer_link"/>
+    <origin xyz="-0.28890 0.28974 0.1280" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="15.0" velocity="25.0"/>
+  </joint>
+
+  <gazebo reference="bl_steer_link">
+    <visual>
+      <material>
+        <ambient>0.1 0.4 0.8 1.0</ambient>
+        <diffuse>0.15 0.5 0.9 1.0</diffuse>
+        <specular>0.5 0.5 0.5 1.0</specular>
+      </material>
+    </visual>
+  </gazebo>
+
+  <!-- ==================== BACK RIGHT ==================== -->
+  <link name="br_steer_link">
+    <inertial>
+      <mass value="1.5"/>
+      <origin xyz="0 0 -0.05" rpy="0 0 0"/>
+      <inertia ixx="0.002" ixy="0" ixz="0" iyy="0.002" iyz="0" izz="0.003"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/Wheel.stl"/>
+      </geometry>
+      <material name="module_blue"/>
+    </visual>
+  </link>
+
+  <joint name="br_steer_joint" type="continuous">
+    <parent link="chassis_link"/>
+    <child link="br_steer_link"/>
+    <origin xyz="-0.28890 -0.28974 0.1280" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="15.0" velocity="25.0"/>
+  </joint>
+
+  <gazebo reference="br_steer_link">
+    <visual>
+      <material>
+        <ambient>0.1 0.4 0.8 1.0</ambient>
+        <diffuse>0.15 0.5 0.9 1.0</diffuse>
+        <specular>0.5 0.5 0.5 1.0</specular>
+      </material>
+    </visual>
+  </gazebo>
+
+  <!-- ==================== GAZEBO CONTROLLER PLUGINS ==================== -->
+  <gazebo>
+    <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+      <joint_name>fl_steer_joint</joint_name>
+      <topic>/model/frc_swerve/joint/fl_steer_joint/cmd_pos</topic>
+      <p_gain>100.0</p_gain>
+      <d_gain>1.0</d_gain>
+    </plugin>
+
+    <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+      <joint_name>fr_steer_joint</joint_name>
+      <topic>/model/frc_swerve/joint/fr_steer_joint/cmd_pos</topic>
+      <p_gain>100.0</p_gain>
+      <d_gain>1.0</d_gain>
+    </plugin>
+
+    <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+      <joint_name>bl_steer_joint</joint_name>
+      <topic>/model/frc_swerve/joint/bl_steer_joint/cmd_pos</topic>
+      <p_gain>100.0</p_gain>
+      <d_gain>1.0</d_gain>
+    </plugin>
+
+    <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+      <joint_name>br_steer_joint</joint_name>
+      <topic>/model/frc_swerve/joint/br_steer_joint/cmd_pos</topic>
+      <p_gain>100.0</p_gain>
+      <d_gain>1.0</d_gain>
+    </plugin>
+  </gazebo>
+
+</robot>
