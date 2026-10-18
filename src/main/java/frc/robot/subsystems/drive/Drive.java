@@ -45,8 +45,6 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
   // TunerConstants doesn't include these constants, so they are declared locally
@@ -80,7 +78,6 @@ public class Drive extends SubsystemBase {
 
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
-  private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
   private final Alert gyroDisconnectedAlert =
       new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
@@ -157,29 +154,32 @@ public class Drive extends SubsystemBase {
         () -> false, // Always perceive field as Blue Alliance (never flip paths)
         this);
     Pathfinding.setPathfinder(new LocalADStarAK());
+    // TODO: fix logging
     PathPlannerLogging.setLogActivePathCallback(
         (activePath) -> {
-          Logger.recordOutput("Odometry/Trajectory", activePath.toArray(new Pose2d[0]));
+          System.out.println("***** Fix logging after AK removal");
+          //Logger.recordOutput("Odometry/Trajectory", activePath.toArray(new Pose2d[0]));
         });
     PathPlannerLogging.setLogTargetPoseCallback(
         (targetPose) -> {
-          Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
+          System.out.println("***** Fix logging after AK removal");
+          //Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
         });
   }
 
   @Override
   public void periodic() {
-    Logger.recordOutput("Drive/DistanceFromHub", getDistanceFromHub());
-    Logger.recordOutput("Drive/RotationToHub", getRotationToHub());
+    //Logger.recordOutput("Drive/DistanceFromHub", getDistanceFromHub());
+    //Logger.recordOutput("Drive/RotationToHub", getRotationToHub());
     SmartDashboard.putNumber("Drive/DistanceFromPass", getDistanceFromPass());
     SmartDashboard.putNumber("Drive/DistanceFromHub", getDistanceFromHub());
 
     double targetLinearVelocity = getTargetLinearVelocity();
     double estimatedGroundSpeed = getEstimatedGroundSpeed();
 
-    Logger.recordOutput("Drive/TargetLinearVelocity", targetLinearVelocity);
-    Logger.recordOutput("Drive/TargetChassisSpeeds", targetChassisSpeeds);
-    Logger.recordOutput("Drive/EstimatedGroundSpeed", estimatedGroundSpeed);
+    //Logger.recordOutput("Drive/TargetLinearVelocity", targetLinearVelocity);
+    //Logger.recordOutput("Drive/TargetChassisSpeeds", targetChassisSpeeds);
+    //Logger.recordOutput("Drive/EstimatedGroundSpeed", estimatedGroundSpeed);
 
     SmartDashboard.putNumber("Drive/TargetVelocity", targetLinearVelocity);
     SmartDashboard.putNumber("Drive/TargetLinearVelocity", targetLinearVelocity);
@@ -202,8 +202,8 @@ public class Drive extends SubsystemBase {
     SmartDashboard.putNumberArray("SwerveStates/Measured", measuredStatesArray);
 
     odometryLock.lock(); // Prevents odometry updates while reading data
-    gyroIO.updateInputs(gyroInputs);
-    Logger.processInputs("Drive/Gyro", gyroInputs);
+    //gyroIO.updateInputs(gyroInputs);
+    //Logger.processInputs("Drive/Gyro", gyroInputs);
     for (var module : modules) {
       module.periodic();
     }
@@ -226,8 +226,8 @@ public class Drive extends SubsystemBase {
 
     // Log empty setpoint states when disabled
     if (DriverStation.isDisabled()) {
-      Logger.recordOutput("SwerveStates/Setpoints", new SwerveModuleState[] {});
-      Logger.recordOutput("SwerveStates/SetpointsOptimized", new SwerveModuleState[] {});
+      //Logger.recordOutput("SwerveStates/Setpoints", new SwerveModuleState[] {});
+      //Logger.recordOutput("SwerveStates/SetpointsOptimized", new SwerveModuleState[] {});
     }
 
     // Update odometry
@@ -248,7 +248,10 @@ public class Drive extends SubsystemBase {
         lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
       }
 
+      // TODO: clean this up
       // Update gyro angle
+      /**
+       * 
       if (gyroInputs.connected) {
         // Use the real gyro angle
         rawGyroRotation = gyroInputs.odometryYawPositions[i];
@@ -257,13 +260,16 @@ public class Drive extends SubsystemBase {
         Twist2d twist = kinematics.toTwist2d(moduleDeltas);
         rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
       }
+      */
+      Twist2d twist = kinematics.toTwist2d(moduleDeltas);
+      rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
 
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
     }
 
     // Update gyro alert
-    gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
+    //gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
 
     // Update Field2d pose
     field.setRobotPose(getPose());
@@ -289,8 +295,8 @@ public class Drive extends SubsystemBase {
     targetModuleStates = setpointStates;
 
     // Log unoptimized setpoints and setpoint speeds
-    Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
-    Logger.recordOutput("SwerveChassisSpeeds/Setpoints", discreteSpeeds);
+    //Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
+    //Logger.recordOutput("SwerveChassisSpeeds/Setpoints", discreteSpeeds);
 
     // Send setpoints to modules
     for (int i = 0; i < 4; i++) {
@@ -298,7 +304,7 @@ public class Drive extends SubsystemBase {
     }
 
     // Log optimized setpoints (runSetpoint mutates each state)
-    Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
+    //Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
   }
 
   /** Runs the drive in a straight line with the specified drive output. */
@@ -327,7 +333,6 @@ public class Drive extends SubsystemBase {
   }
 
   /** Returns the module states (turn angles and drive velocities) for all of the modules. */
-  @AutoLogOutput(key = "SwerveStates/Measured")
   private SwerveModuleState[] getModuleStates() {
     SwerveModuleState[] states = new SwerveModuleState[4];
     for (int i = 0; i < 4; i++) {
@@ -346,7 +351,6 @@ public class Drive extends SubsystemBase {
   }
 
   /** Returns the measured chassis speeds of the robot. */
-  @AutoLogOutput(key = "SwerveChassisSpeeds/Measured")
   public ChassisSpeeds getChassisSpeeds() {
     return kinematics.toChassisSpeeds(getModuleStates());
   }
@@ -370,13 +374,8 @@ public class Drive extends SubsystemBase {
   }
 
   /** Returns the current odometry pose with the configured offset applied. */
-  @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
     Pose2d rawPose = poseEstimator.getEstimatedPosition();
-    Logger.recordOutput("Odometry/RawRobot", rawPose);
-    Logger.recordOutput(
-        "Odometry/PoseOffset",
-        new double[] {poseOffset.getX(), poseOffset.getY(), poseOffset.getRotation().getRadians()});
     return rawPose.plus(poseOffset);
   }
 
@@ -399,7 +398,6 @@ public class Drive extends SubsystemBase {
    *
    * @return Distance to the Hub target in meters.
    */
-  @AutoLogOutput(key = "Drive/DistanceFromHub")
   public double getDistanceFromHub() {
     return getPose().getTranslation().getDistance(getHubPosition());
   }
@@ -426,7 +424,6 @@ public class Drive extends SubsystemBase {
    *
    * @return Rotation2d facing the Hub.
    */
-  @AutoLogOutput(key = "Drive/RotationToHub")
   public Rotation2d getRotationToHub() {
     return getRotationToHub(getHubPosition());
   }
@@ -454,7 +451,6 @@ public class Drive extends SubsystemBase {
    *
    * @return Translation2d of the virtual target position.
    */
-  @AutoLogOutput(key = "Drive/VirtualHubPosition")
   public Translation2d getVirtualHubPosition() {
     Translation2d robotTranslation = getPose().getTranslation();
     ChassisSpeeds robotSpeedsField =
@@ -476,7 +472,6 @@ public class Drive extends SubsystemBase {
   }
 
   /** Calculates the distance in meters to the virtual hub for Shoot for Hub. */
-  @AutoLogOutput(key = "Drive/ShootForHubDistance")
   public double getShootForHubDistance() {
     return getPose().getTranslation().getDistance(getVirtualHubPosition());
   }
@@ -487,7 +482,6 @@ public class Drive extends SubsystemBase {
   }
 
   /** Calculates the target heading angle facing the virtual hub for Shoot for Hub. */
-  @AutoLogOutput(key = "Drive/ShootForHubRotation")
   public Rotation2d getShootForHubRotation() {
     if (frc.robot.commands.SuperStructure.isShootWithoutRotationEnabled()) {
       return getRotation();
@@ -495,7 +489,6 @@ public class Drive extends SubsystemBase {
     return getRotationToHub(getVirtualHubPosition());
   }
 
-  @AutoLogOutput(key = "Drive/PassRotation")
   public Rotation2d getPassRotation() {
     if (frc.robot.commands.SuperStructure.isShootWithoutRotationEnabled()) {
       return getRotation();
@@ -509,7 +502,6 @@ public class Drive extends SubsystemBase {
   }
 
   /** Checks if the robot heading is aligned to the virtual Hub within a tolerance (in degrees). */
-  @AutoLogOutput(key = "Drive/IsAlignedToHub")
   public boolean isAlignedToHub(double toleranceDegrees) {
     if (frc.robot.commands.SuperStructure.isShootWithoutRotationEnabled()) {
       return true;
@@ -523,7 +515,6 @@ public class Drive extends SubsystemBase {
   }
 
   /** Checks if the robot heading is aligned to the Pass target within a tolerance (in degrees). */
-  @AutoLogOutput(key = "Drive/IsAlignedToPass")
   public boolean isAlignedToPass(double toleranceDegrees) {
     if (frc.robot.commands.SuperStructure.isShootWithoutRotationEnabled()) {
       return true;
@@ -592,20 +583,17 @@ public class Drive extends SubsystemBase {
   }
 
   /** Returns the measured estimated ground speed of the robot in meters per second. */
-  @AutoLogOutput(key = "Drive/EstimatedGroundSpeed")
   public double getEstimatedGroundSpeed() {
     ChassisSpeeds speeds = getChassisSpeeds();
     return Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
   }
 
   /** Returns the target linear velocity of the drivetrain in meters per second. */
-  @AutoLogOutput(key = "Drive/TargetLinearVelocity")
   public double getTargetLinearVelocity() {
     return Math.hypot(targetChassisSpeeds.vxMetersPerSecond, targetChassisSpeeds.vyMetersPerSecond);
   }
 
   /** Returns the target chassis speeds of the drivetrain. */
-  @AutoLogOutput(key = "Drive/TargetChassisSpeeds")
   public ChassisSpeeds getTargetChassisSpeeds() {
     return targetChassisSpeeds;
   }

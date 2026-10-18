@@ -64,12 +64,6 @@ wpi.java.debugJni = false
 // Set this to true to enable desktop support.
 def includeDesktopSupport = true
 
-// Configuration for AdvantageKit
-task(replayWatch, type: JavaExec) {
-    mainClass = "org.littletonrobotics.junction.ReplayWatch"
-    classpath = sourceSets.main.runtimeClasspath
-}
-
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 4.
 dependencies {
@@ -93,9 +87,6 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    def akitJson = new groovy.json.JsonSlurper().parseText(new File(projectDir.getAbsolutePath() + "/vendordeps/AdvantageKit.json").text)
-    annotationProcessor "org.littletonrobotics.akit:akit-autolog:$akitJson.version"
 }
 
 test {
@@ -108,8 +99,9 @@ test {
 // The sim GUI is *disabled* by default to support running
 // AdvantageKit log replay, which requires that all HAL
 // sim extensions be disabled.
-wpi.sim.addGui().defaultEnabled = false
-wpi.sim.addDriverstation()
+// delete this if it works afet AK removal
+//wpi.sim.addGui().defaultEnabled = false
+//wpi.sim.addDriverstation()
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
 // in order to make them all available at runtime. Also adding the manifest so WPILib

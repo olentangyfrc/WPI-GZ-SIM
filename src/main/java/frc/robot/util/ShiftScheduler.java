@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.littletonrobotics.junction.Logger;
 
 /**
  * ShiftScheduler handles FRC REBUILD game shift scheduling, hub active state, time remaining in
@@ -298,6 +297,8 @@ public final class ShiftScheduler {
     }
 
     // AdvantageKit Logging
+    /**
+     * 
     Logger.recordOutput("ShiftScheduler/MatchTimeRemaining", matchTime);
     Logger.recordOutput("ShiftScheduler/TimeToNextShift", timeToNextShift);
     Logger.recordOutput("ShiftScheduler/CurrentShift", currentShift);
@@ -305,6 +306,7 @@ public final class ShiftScheduler {
     Logger.recordOutput("ShiftScheduler/AutoResult", autoResult);
     Logger.recordOutput("ShiftScheduler/WonAuto", wonAuto);
     Logger.recordOutput("ShiftScheduler/ShiftChangeUpcoming", shiftUpcoming);
+    */
 
     // SmartDashboard / NetworkTables entries for Elastic Dashboard
     SmartDashboard.putNumber("ShiftScheduler/MatchTimeRemaining", matchTime);

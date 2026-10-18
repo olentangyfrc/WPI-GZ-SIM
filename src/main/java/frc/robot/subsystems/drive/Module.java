@@ -20,7 +20,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class Module {
   private final ModuleIO io;
-  private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
+  private final ModuleIOInputs inputs = new ModuleIOInputs();
   private final int index;
   private final SwerveModuleConstants<
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
@@ -53,6 +53,7 @@ public class Module {
   }
 
   public void periodic() {
+    // TODO: after AK removal should this just pull data from NT?
     io.updateInputs(inputs);
     Logger.processInputs("Drive/Module" + Integer.toString(index), inputs);
 

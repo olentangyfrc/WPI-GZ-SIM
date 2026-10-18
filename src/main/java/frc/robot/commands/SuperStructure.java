@@ -19,7 +19,6 @@ import frc.robot.subsystems.serializer.Serializer;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.ShiftScheduler;
 import java.util.function.Supplier;
-import org.littletonrobotics.junction.Logger;
 
 public class SuperStructure {
   private static String lastCommand = "None";
@@ -30,7 +29,6 @@ public class SuperStructure {
 
   private static void setLastCommand(String commandName) {
     lastCommand = commandName;
-    Logger.recordOutput("SuperStructure/LastCommand", commandName);
     SmartDashboard.putString("SuperStructure/LastCommand", commandName);
   }
 

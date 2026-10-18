@@ -221,9 +221,6 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     double targetRotations = (hoodTargetAngle - Math.toRadians(31)) / (2 * Math.PI);
     hoodMotor.setControl(hoodPositionRequest.withPosition(targetRotations));
-    org.littletonrobotics.junction.Logger.recordOutput("Shooter/IsPassing", isPassing());
-    org.littletonrobotics.junction.Logger.recordOutput(
-        "Shooter/DrumSpeedScale", getDrumSpeedScale());
   }
 
   public void spinUpDrum() {
